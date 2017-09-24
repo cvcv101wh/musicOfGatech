@@ -8,6 +8,8 @@
 Tone tone1;
 Tone tone2;
 Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
+
+//from sd card Initialization example 
 void configureSensor(void)
 {
   /* You can also manually set the gain or enable auto-gain support */
@@ -119,9 +121,10 @@ void loop()
 {
 //tone1.play(NOTE_A4);
 
-  
+//read the value of photoresistor
 int sensorReading = analogRead(A0);
 
+//read the value of lux sensor, from the TSL2561 example
   /* Get a new sensor event */ 
   sensors_event_t event;
   tsl.getEvent(&event);
@@ -140,12 +143,16 @@ int sensorReading = analogRead(A0);
        and no reliable data could be generated! */
     Serial.println("Sensor overload");
   }
+// use delay to make tempo
 
   delay(mapTempo(sensorReading,900,1200));
+  //one continuous track
   if(tone1.isPlaying())
   {
   tone1.play(mapPitch(event.light,4000,10000 ));
   }
+  
+  //one discrete track
   if(tone2.isPlaying())
   {
     tone2.stop();
