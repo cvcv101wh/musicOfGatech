@@ -9,7 +9,7 @@ Tone tone1;
 Tone tone2;
 Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);
 
-//from sd card Initialization example 
+//from tsl2561 light sensor Initialization example 
 void configureSensor(void)
 {
   /* You can also manually set the gain or enable auto-gain support */
@@ -44,6 +44,7 @@ void setup() {
   }
  configureSensor();
 
+// from the SD card example
   Serial.print("Initializing SD card...");
 
   // see if the card is present and can be initialized:
@@ -69,10 +70,6 @@ void setup() {
     Serial.println("error opening datalog.txt");
   }
   
-//  tone1.begin(8);
-//  tone1.play(NOTE_A4);
-//  tone1.begin(9);
-//  tone1.play(NOTE_C3);
   
 }
 
@@ -119,7 +116,7 @@ delayTime = 960;
 }
 void loop()
 {
-//tone1.play(NOTE_A4);
+
 
 //read the value of photoresistor
 int sensorReading = analogRead(A0);
