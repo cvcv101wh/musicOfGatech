@@ -4,6 +4,10 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_TSL2561_U.h>
+int minForSensorLux;
+int maxForSensorLux;
+int minForPhotoResistor;
+int maxForPhotoResistor;
 
 Tone tone1;
 Tone tone2;
@@ -70,6 +74,22 @@ void setup() {
     Serial.println("error opening datalog.txt");
   }
   
+//read the value of photoresistor
+int sensorReading = analogRead(A0);
+minForPhotoResistor=sensorReading;
+maxForPhotoResistor=sensorReading+1;
+//read the value of lux sensor, from the TSL2561 example
+  /* Get a new sensor event */ 
+  sensors_event_t event;
+  tsl.getEvent(&event);
+ 
+  /* Display the results (light is measured in lux) */
+  if (event.light)
+  {
+   minForSensorLux = event.light;
+   maxForSensorLux =  minForSensorLux+1;
+  }
+
   
 }
 
@@ -129,6 +149,22 @@ int sensorReading = analogRead(A0);
   /* Display the results (light is measured in lux) */
   if (event.light)
   {
+    if(event.light<minForSensorLux)
+    {
+      minForSensorLux=event.light;
+    }
+    if(event.light>maxForSensorLux)
+    {
+      maxForSensorLux=event.light;
+    }
+    if(sensorReading<minForPhotoResistor)
+    {
+      minForPhotoResistor = sensorReading;
+    }
+    if(sensorReading>maxForPhotoResistor)
+    {
+      maxForPhotoResistor = sensorReading;
+    }
     Serial.print(event.light); 
     Serial.print(" lux    ");
      Serial.print(sensorReading);
@@ -142,11 +178,11 @@ int sensorReading = analogRead(A0);
   }
 // use delay to make tempo
 
-  delay(mapTempo(sensorReading,900,1200));
+  delay(mapTempo(sensorReading,minForPhotoResistor,maxForPhotoResistor));
   //one continuous track
   if(tone1.isPlaying())
   {
-  tone1.play(mapPitch(event.light,4000,10000 ));
+  tone1.play(mapPitch(event.light,minForSensorLux,maxForSensorLux ));
   }
   
   //one discrete track
@@ -156,6 +192,6 @@ int sensorReading = analogRead(A0);
   }
   else
   {
-    tone2.play(mapPitch(sensorReading,900,1000));
+    tone2.play(mapPitch(sensorReading,minForPhotoResistor,maxForPhotoResistor));
   }
 }
